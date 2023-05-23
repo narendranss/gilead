@@ -2,8 +2,8 @@ package net.sf.gilead.test.dao.hibernate;
 
 import java.util.List;
 
-import org.hibernate.LockMode;
-import org.hibernate.Query;
+import jakarta.persistence.LockModeType;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -85,7 +85,7 @@ public class MessageDAO implements IMessageDAO {
 
             // Fill query
             Query query = session.createQuery(hqlQuery.toString());
-            query.setInteger("id", id);
+            query.setParameter("id", id);
 
             // Execute query
             IMessage message = (IMessage) query.uniqueResult();
@@ -148,7 +148,7 @@ public class MessageDAO implements IMessageDAO {
 
             // Lock message
             if (message.getId() > 0) {
-                session.lock(message, LockMode.UPGRADE);
+                session.lock(message, LockModeType.PESSIMISTIC_WRITE);
             }
             transaction.commit();
         } catch (RuntimeException e) {

@@ -15,8 +15,8 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.ManagedType;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.ManagedType;
 
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -24,13 +24,13 @@ import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.SessionException;
 import org.hibernate.SessionFactory;
-import org.hibernate.collection.internal.AbstractPersistentCollection;
-import org.hibernate.collection.internal.PersistentBag;
-import org.hibernate.collection.internal.PersistentList;
-import org.hibernate.collection.internal.PersistentMap;
-import org.hibernate.collection.internal.PersistentSet;
-import org.hibernate.collection.internal.PersistentSortedMap;
-import org.hibernate.collection.internal.PersistentSortedSet;
+import org.hibernate.collection.spi.AbstractPersistentCollection;
+import org.hibernate.collection.spi.PersistentBag;
+import org.hibernate.collection.spi.PersistentList;
+import org.hibernate.collection.spi.PersistentMap;
+import org.hibernate.collection.spi.PersistentSet;
+import org.hibernate.collection.spi.PersistentSortedMap;
+import org.hibernate.collection.spi.PersistentSortedSet;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
@@ -229,11 +229,11 @@ public class HibernateUtil implements PersistenceUtil {
             if (pojo instanceof HibernateProxy) {
                 // To prevent LazyInitialisationException
                 LOGGER.debug("Get identifier by LazyInitializer [{}].", pojo.getClass().getName());
-                id = ((HibernateProxy) pojo).getHibernateLazyInitializer().getIdentifier();
+                id = (Serializable) ((HibernateProxy) pojo).getHibernateLazyInitializer().getIdentifier();
             } else {
                 // Otherwise : use metada
                 LOGGER.debug("Get identifier by ClassMetadata [{}].", pojo.getClass().getName());
-                id = entityPersister.getClassMetadata().getIdentifier(pojo, (SharedSessionContractImplementor) session);
+                id = (Serializable) entityPersister.getClassMetadata().getIdentifier(pojo, (SharedSessionContractImplementor) session);
             }
         } else {
             LOGGER.debug("Get identifier of POJO [{}].", pojo.getClass().getName());
@@ -411,7 +411,7 @@ public class HibernateUtil implements PersistenceUtil {
             result.put(UNDERLYING_COLLECTION, underlying.getClass().getName());
         }
         result.put(ROLE, collection.getRole());
-        result.put(KEY, collection.getKey());
+        result.put(KEY, (Serializable) collection.getKey());
 
         // Store ids
         if (isInitialized(collection) == true) {
@@ -429,7 +429,7 @@ public class HibernateUtil implements PersistenceUtil {
         AbstractPersistentCollection collection = (AbstractPersistentCollection) persistentMap;
         result.put(CLASS_NAME, collection.getClass().getName());
         result.put(ROLE, collection.getRole());
-        result.put(KEY, collection.getKey());
+        result.put(KEY, (Serializable) collection.getKey());
 
         // Store ids
         if (isInitialized(collection) == true) {
@@ -450,7 +450,7 @@ public class HibernateUtil implements PersistenceUtil {
      * Create a persistent collection
      *
      * @param proxyInformations serialized proxy informations
-     * @param underlyingCollection the filled underlying collection
+     * @param underlyingMap the filled underlying collection
      * @return
      */
     @Override
@@ -474,7 +474,7 @@ public class HibernateUtil implements PersistenceUtil {
         } else if (PersistentSortedMap.class.getName().equals(className)) {
             // Persistent map creation
             if (originalMap == null) {
-                collection = new PersistentSortedMap(session);
+                collection = new PersistentSortedMap();
             } else {
                 collection = new PersistentSortedMap(session, (SortedMap<?, ?>) originalMap);
             }
@@ -565,7 +565,7 @@ public class HibernateUtil implements PersistenceUtil {
             } else if (PersistentSortedSet.class.getName().equals(className)) {
                 // Persistent sorted set creation
                 if (originalCollection == null) {
-                    collection = new PersistentSortedSet(session);
+                    collection = new PersistentSortedSet();
                 } else {
                     collection = new PersistentSortedSet(session, (SortedSet<?>) originalCollection);
                 }
@@ -817,7 +817,7 @@ public class HibernateUtil implements PersistenceUtil {
 
         // Look for component classes
         for (String entityName : entityNames) {
-            Type[] types = sessionFactory.getClassMetadata(entityName).getPropertyTypes();
+            Type[] types = sessionFactory.getMetamodel().entityPersister(entityName).getPropertyTypes();
             for (Type type : types) {
                 LOGGER.debug("Scanning type [{}] from [{}].", type.getName(), clazz);
                 computePersistentForType(type);
@@ -974,7 +974,7 @@ public class HibernateUtil implements PersistenceUtil {
     /**
      * Check if the id equals the unsaved value or not
      *
-     * @param entity
+     * @param pojo
      * @return
      */
     private boolean isUnsavedValue(Object pojo, Serializable id, Class<?> persistentClass) {
@@ -983,11 +983,17 @@ public class HibernateUtil implements PersistenceUtil {
             return true;
         }
 
+        if(id instanceof Integer) {
+            if(((Integer)id)==0) {
+                return true;
+            }
+        }
+
         // Get unsaved value from entity metamodel
         EntityPersister entityPersister = sessionFactory.getMetamodel().entityPersister(getEntityName(persistentClass, pojo));
         EntityMetamodel metamodel = entityPersister.getEntityMetamodel();
         IdentifierProperty idProperty = metamodel.getIdentifierProperty();
-        Boolean result = idProperty.getUnsavedValue().isUnsaved(id);
+        Boolean result = idProperty.isVirtual(); //getUnsavedValue().isUnsaved(id);
 
         if (result == null) {
             // Unsaved value undefined
@@ -1019,7 +1025,7 @@ public class HibernateUtil implements PersistenceUtil {
      * (Re)create the original collection
      *
      * @param proxyInformations
-     * @param underlyingCollection
+     * @param collection
      */
     @SuppressWarnings("unchecked")
     private <T> Collection<T> createOriginalCollection(Map<String, Serializable> proxyInformations, Collection<T> collection) {
@@ -1064,7 +1070,7 @@ public class HibernateUtil implements PersistenceUtil {
      * (Re)create the original map
      *
      * @param proxyInformations
-     * @param underlyingCollection
+     * @param map
      */
     @SuppressWarnings("unchecked")
     private <K, V> Map<K, V> createOriginalMap(Map<String, Serializable> proxyInformations, Map<K, V> map) {
@@ -1148,8 +1154,8 @@ public class HibernateUtil implements PersistenceUtil {
     /**
      * Test if the two argument collection are the same or not
      *
-     * @param coll1
-     * @param coll2
+     * @param map1
+     * @param map2
      * @return
      */
     @SuppressWarnings("rawtypes")

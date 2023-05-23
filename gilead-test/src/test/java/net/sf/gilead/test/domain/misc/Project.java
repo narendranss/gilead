@@ -3,11 +3,11 @@ package net.sf.gilead.test.domain.misc;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 
 import net.sf.gilead.pojo.java5.LightEntity;
 

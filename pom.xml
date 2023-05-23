@@ -21,13 +21,14 @@
 
 	<properties>
 		<version.com.google.gwt>2.9.0</version.com.google.gwt>
-		<version.com.h2database>1.4.200</version.com.h2database>
+		<version.com.h2database>2.1.214</version.com.h2database>
 		<version.com.thoughtworks.xstream>1.4.12</version.com.thoughtworks.xstream>
-		<version.javax.javaee-api>8.0</version.javax.javaee-api>
+		<version.jakarata.javaee-api>10.0.0</version.jakarata.javaee-api>
 		<version.junit>4.13.1</version.junit>
-		<version.net.sf.beanlib>7.2.0</version.net.sf.beanlib>
+		<version.net.sf.beanlib>7.2.1-SNAPSHOT</version.net.sf.beanlib>
 		<version.org.apache.commons.lang3>3.9</version.org.apache.commons.lang3>
-		<version.org.hibernate>5.4.20.Final</version.org.hibernate>
+		<version.org.hibernate>6.1.7.Final</version.org.hibernate>
+		<version.org.hibernate.validator>8.0.0.Final</version.org.hibernate.validator>
 		<version.org.javassist>3.23.2-GA</version.org.javassist>
 		<version.org.slf4j>1.7.30</version.org.slf4j>
 
@@ -88,10 +89,24 @@
 				<artifactId>hibernate-entitymanager</artifactId>
 				<version>${version.org.hibernate}</version>
 			</dependency>
+
 			<dependency>
-				<groupId>javax</groupId>
-				<artifactId>javaee-api</artifactId>
-				<version>${version.javax.javaee-api}</version>
+				<groupId>org.hibernate.validator</groupId>
+				<artifactId>hibernate-validator</artifactId>
+				<version>${version.org.hibernate.validator}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.hibernate.validator</groupId>
+				<artifactId>hibernate-validator-cdi</artifactId>
+				<version>${version.org.hibernate.validator}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>jakarta.platform</groupId>
+				<artifactId>jakarta.jakartaee-api</artifactId>
+				<version>${version.jakarata.javaee-api}</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -167,6 +182,19 @@
 					<target>${project.compile.version}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<argLine>
+						--add-opens java.base/java.lang=ALL-UNNAMED
+						--add-opens java.base/java.util=ALL-UNNAMED
+						--add-opens java.base/java.lang.reflect=ALL-UNNAMED
+						--add-opens java.base/java.text=ALL-UNNAMED
+						--add-opens java.desktop/java.awt.font=ALL-UNNAMED
+					</argLine>
 				</configuration>
 			</plugin>
 			<plugin>

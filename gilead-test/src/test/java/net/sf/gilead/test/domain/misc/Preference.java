@@ -1,6 +1,6 @@
 package net.sf.gilead.test.domain.misc;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 import org.hibernate.annotations.Parent;
 

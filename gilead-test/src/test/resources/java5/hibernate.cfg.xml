@@ -11,7 +11,8 @@
         <property name="connection.password"></property>
 
         <!-- Disable second-level cache. -->
-        <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
+        <property name="cache.provider_class">org.hibernate.cache.internal.NoCachingRegionFactory</property>
+        <property name="hibernate.globally_quoted_identifiers">true</property>
         <property name="cache.use_query_cache">false</property>
         <property name="cache.use_minimal_puts">false</property>
         <property name="max_fetch_depth">3</property>

@@ -34,7 +34,7 @@ public class GwtProxySerialization extends GwtSerializer implements IProxySerial
     }
 
     /**
-     * @param serializer the string serializer to set
+     * @param stringSerializer the string serializer to set
      */
     public void setStringSerializer(IProxySerialization stringSerializer) {
         this.stringSerializer = stringSerializer;

@@ -2,7 +2,7 @@ package net.sf.gilead.test.dao.hibernate;
 
 import java.util.List;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -32,7 +32,7 @@ public class UserDAO implements IUserDAO {
 
             // Create query
             Query query = session.createQuery("from User user where user.id=:id");
-            query.setInteger("id", id);
+            query.setParameter("id", id);
 
             // Execute query
             IUser user = (IUser) query.uniqueResult();
@@ -64,7 +64,7 @@ public class UserDAO implements IUserDAO {
 
             // Fill query
             Query query = session.createQuery(hqlQuery.toString());
-            query.setString("login", login);
+            query.setParameter("login", login);
 
             // Execute query
             IUser user = (IUser) query.uniqueResult();
@@ -98,7 +98,7 @@ public class UserDAO implements IUserDAO {
 
             // Fill query
             Query query = session.createQuery(hqlQuery.toString());
-            query.setString("login", login);
+            query.setParameter("login", login);
 
             // Execute query
             IUser user = (IUser) query.uniqueResult();
@@ -132,7 +132,7 @@ public class UserDAO implements IUserDAO {
 
             // Fill query
             Query query = session.createQuery(hqlQuery.toString());
-            query.setString("login", login);
+            query.setParameter("login", login);
 
             // Execute query
             IUser user = (IUser) query.uniqueResult();

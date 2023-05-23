@@ -193,7 +193,7 @@ public abstract class CloneTest extends TestCase {
 
         // Create a new user and save it
         Session session = HibernateContext.getSessionFactory().getCurrentSession();
-        session.setFlushMode(FlushMode.MANUAL);
+        session.setHibernateFlushMode(FlushMode.MANUAL);
         Transaction tx = session.beginTransaction();
 
         IUser user = createNewUser();
@@ -473,7 +473,7 @@ public abstract class CloneTest extends TestCase {
      */
     public void testCloneAndMergeTransientObject() throws Exception {
         // Clone and merge integer
-        Integer clone = (Integer) beanManager.clone(new Integer(2));
+        Integer clone = (Integer) beanManager.clone(Integer.valueOf(2));
         assertEquals(2, clone.intValue());
 
         Integer merge = (Integer) beanManager.merge(clone);

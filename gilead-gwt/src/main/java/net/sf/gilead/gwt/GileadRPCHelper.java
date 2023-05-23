@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.gilead.core.PersistentBeanManager;
 import net.sf.gilead.core.beanlib.mapper.ProxyClassMapper;
-import net.sf.gilead.core.store.stateful.HttpSessionProxyStore;
 import net.sf.gilead.exception.NotAssignableException;
 import net.sf.gilead.exception.TransientObjectException;
 import net.sf.gilead.proxy.AdditionalCodeManager;
@@ -45,7 +44,7 @@ public class GileadRPCHelper {
     /**
      * Parse RPC input parameters. Must be called before GWT service invocation.
      *
-     * @param rpcRequest the input GWT RPC request
+     * @param parameters the input GWT RPC request
      * @param beanManager the Hibernate bean manager
      * @param session the HTTP session (for HTTP Pojo store)
      */

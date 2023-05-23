@@ -17,7 +17,7 @@ import net.sf.gilead.test.domain.misc.Project;
 import net.sf.gilead.test.domain.misc.SomeDictionary;
 import net.sf.gilead.test.domain.misc.Utente;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -263,7 +263,7 @@ public class NonRegressionTest extends TestCase {
 
             // Fill query
             Query query = session.createQuery(hqlQuery.toString());
-            query.setString("name", pageName);
+            query.setParameter("name", pageName);
 
             // Execute query
             Page page = (Page) query.uniqueResult();

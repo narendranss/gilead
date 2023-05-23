@@ -1,6 +1,6 @@
 package net.sf.gilead.core.hibernate.jpa;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

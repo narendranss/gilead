@@ -52,7 +52,7 @@ public abstract class PersistentRemoteService extends RemoteServiceServlet {
     }
 
     /**
-     * @param manager the Hibernate Bean Manager to set
+     * @param beanManager the Hibernate Bean Manager to set
      */
     public void setBeanManager(PersistentBeanManager beanManager) {
         this.beanManager = beanManager;

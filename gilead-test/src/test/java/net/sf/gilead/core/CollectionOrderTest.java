@@ -1,6 +1,6 @@
 package net.sf.gilead.core;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -182,7 +182,7 @@ public class CollectionOrderTest extends TestCase {
 
             // Fill query
             Query query = session.createQuery(hqlQuery.toString());
-            query.setString("name", pageName);
+            query.setParameter("name", pageName);
 
             // Execute query
             Page page = (Page) query.uniqueResult();
